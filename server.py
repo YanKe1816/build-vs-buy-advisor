@@ -217,15 +217,27 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         if self.path == "/privacy":
-            _text_response(self, 200, "Privacy: This deterministic tool does not store personal data.")
+            _text_response(
+                self,
+                200,
+                "Privacy: Build vs Buy Advisor processes only the decision inputs provided in each request. No personal data is required. We do not store, share, sell, or use submitted data for tracking. Request data is processed transiently only to generate the recommendation result.",
+            )
             return
 
         if self.path == "/terms":
-            _text_response(self, 200, "Terms: Provided as-is for build-vs-buy advisory judgments.")
+            _text_response(
+                self,
+                200,
+                "Terms: Build vs Buy Advisor provides informational planning recommendations only. It does not provide legal, procurement, compliance, security, or architecture advice. Use of the app is provided as-is.",
+            )
             return
 
         if self.path == "/support":
-            _text_response(self, 200, "Support: Contact your platform administrator for assistance.")
+            _text_response(
+                self,
+                200,
+                "Support: For questions or support, contact sidcraigau@gmail.com",
+            )
             return
 
         _json_response(self, 404, {"error": "not found"})
@@ -256,7 +268,6 @@ class Handler(BaseHTTPRequestHandler):
         _json_response(self, 200, response)
 
     def log_message(self, fmt: str, *args: Any) -> None:
-        # Keep output deterministic/minimal for hosted environments.
         return
 
 
