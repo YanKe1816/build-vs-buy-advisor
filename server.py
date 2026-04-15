@@ -4,6 +4,9 @@
 Endpoints:
 - GET /health
 - POST /mcp
+- GET /privacy
+- GET /terms
+- GET /support
 - GET /.well-known/openai-apps-challenge
 
 No external dependencies.
@@ -110,6 +113,7 @@ def _mcp_tool_schema() -> Dict[str, Any]:
     return {
         "name": TOOL_NAME,
         "description": TOOL_DESCRIPTION,
+        "annotations": {"readOnlyHint": True},
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -124,6 +128,16 @@ def _mcp_tool_schema() -> Dict[str, Any]:
                 "handles_sensitive_data",
                 "is_mvp",
             ],
+            "additionalProperties": False,
+        },
+        "outputSchema": {
+            "type": "object",
+            "properties": {
+                "decision": {"type": "string"},
+                "reason": {"type": "string"},
+                "next_step": {"type": "string"},
+            },
+            "required": ["decision", "reason", "next_step"],
             "additionalProperties": False,
         },
     }
@@ -198,8 +212,20 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         if self.path == "/.well-known/openai-apps-challenge":
-            token = os.getenv("OPENAI_APPS_CHALLENGE", TOOL_NAME)
+            token = os.getenv("OPENAI_APPS_CHALLENGE", "")
             _text_response(self, 200, token)
+            return
+
+        if self.path == "/privacy":
+            _text_response(self, 200, "Privacy: This deterministic tool does not store personal data.")
+            return
+
+        if self.path == "/terms":
+            _text_response(self, 200, "Terms: Provided as-is for build-vs-buy advisory judgments.")
+            return
+
+        if self.path == "/support":
+            _text_response(self, 200, "Support: Contact your platform administrator for assistance.")
             return
 
         _json_response(self, 404, {"error": "not found"})
